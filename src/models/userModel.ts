@@ -1,70 +1,78 @@
-import connection from "../utils/connection";
 import { IUser } from "../interfaces/IUser";
-import { ResultSetHeader } from "mysql2";
+import { Pool, ResultSetHeader } from "mysql2/promise";
 
-export async function getAll(): Promise<IUser[]> {
-    const query = 'SELECT * FROM express.users'
-    const [users] = await connection.execute(query)
+export default class UserModel {
+    public connection: Pool;
 
-    return users as IUser[];
-}
+    constructor(connection: Pool) {
+        this.connection = connection;
+    }
 
-export async function getById(id: number): Promise<IUser | null> {
-    const query = 'SELECT * FROM express.users WHERE id = ?';
-    const values = [id];
+    public async getAll(): Promise<IUser[]> {
+        const query = 'SELECT * FROM express.users'
+        const [users] = await this.connection
+            .execute(query)
 
-    const [data] = await connection.execute(query, values);
-    const [user] = data as IUser[]
+        return users as IUser[];
+    }
 
-    return user || null
-}
+    public async getById(id: number): Promise<IUser | null> {
+        const query = 'SELECT * FROM express.users WHERE id = ?';
+        const values = [id];
 
-export async function getByEmail(email: string): Promise<IUser | null> {
-    const query = 'SELECT * FROM Users WHERE email = ?';
-    const values = [email];
+        const [data] = await this.connection.execute(query, values);
+        const [user] = data as IUser[]
 
-    const [data] = await connection.execute(query, values);
-    const [user] = data as IUser[];
+        return user || null
+    }
 
-    return user || null;
-}
+    public async getByEmail(email: string): Promise<IUser | null> {
+        const query = 'SELECT * FROM Users WHERE email = ?';
+        const values = [email];
+
+        const [data] = await this.connection.execute(query, values);
+        const [user] = data as IUser[];
+
+        return user || null;
+    }
 
 
-export async function create(user: IUser): Promise<IUser> {
-    const { nome, email, senha } = user;
+    public async create(user: IUser): Promise<IUser> {
+        const { nome, email, senha } = user;
 
-    const query = 'INSERT INTO Users (name, email, password) VALUES (?, ?, ?)';
-    const values = [nome, email, senha];
+        const query = 'INSERT INTO Users (name, email, password) VALUES (?, ?, ?)';
+        const values = [nome, email, senha];
 
-    const [result] = await connection.execute<ResultSetHeader>(query, values);
-    const { insertId: id } = result;
+        const [result] = await this.connection.execute<ResultSetHeader>(query, values);
+        const { insertId: id } = result;
 
-    const newUser: IUser = { id, nome, email, senha };
-    return newUser;
-}
+        const newUser: IUser = { id, nome, email, senha };
+        return newUser;
+    }
 
-export async function update(id: number, user: IUser): Promise<IUser> {
-    const { nome, email, senha } = user;
+    public async update(id: number, user: IUser): Promise<IUser> {
+        const { nome, email, senha } = user;
 
-    const query = 'UPDATE Users SET name = ?, email = ?, password = ? WHERE id = ?';
-    const values = [nome, email, senha, id];
+        const query = 'UPDATE Users SET name = ?, email = ?, password = ? WHERE id = ?';
+        const values = [nome, email, senha, id];
 
-    await connection.execute(query, values);
+        await this.connection.execute(query, values);
 
-    const editedUser: IUser = { id, nome, email, senha };
-    return editedUser;
-}
+        const editedUser: IUser = { id, nome, email, senha };
+        return editedUser;
+    }
 
-export async function remove(id: number): Promise<IUser | null> {
-    const userToBeDeleted = await getById(id);
-    if (!userToBeDeleted) return null;
+    public async remove(id: number): Promise<IUser | null> {
+        const userToBeDeleted = await this.getById(id);
+        if (!userToBeDeleted) return null;
 
-    const query = 'DELETE FROM Users WHERE id = ?';
-    const values = [id];
+        const query = 'DELETE FROM Users WHERE id = ?';
+        const values = [id];
 
-    await connection.execute(query, values);
+        await this.connection.execute(query, values);
 
-    return userToBeDeleted;
+        return userToBeDeleted;
+    }
 }
 
 
