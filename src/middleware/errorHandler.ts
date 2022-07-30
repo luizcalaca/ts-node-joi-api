@@ -1,6 +1,8 @@
-import { ErrorRequestHandler } from 'express';
+import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 
-export const errorHandler: ErrorRequestHandler = async (err, _req, res, next) => {
+export const errorHandler: ErrorRequestHandler = async (
+    err, _req: Request, res: Response, next: NextFunction
+) => {
     const { name, message, details } = err;
     console.log(`name: ${name}`);
 
@@ -11,12 +13,11 @@ export const errorHandler: ErrorRequestHandler = async (err, _req, res, next) =>
         case 'NotFoundError':
             res.status(404).json({ message });
             break;
-        case 'ConflictError':
-            res.status(409).json({ message });
+        case 'Unauthorized':
+            res.status(401).json({ message });
             break;
         default:
-            console.error(err);
-            res.sendStatus(500);
+            res.status(500).json({ message });
     }
     next()
 };

@@ -5,15 +5,16 @@ export const validateUser = (data: IUser): ValidationResult => {
     const schema = Joi.object({
         email: Joi.string().email().required()
             .messages(
-                { 'string.min': 'Email não pode ser vazio e deve ter ao menos 3 caracteres' },
+                { 'string.min': 'Email deve ter ao menos 3 caracteres' },
             ),
-        nome: Joi.string().required().min(3).messages(
-            { 'string.min': 'Nome não pode ser vazio, mínimo 3 caracteres' },
-        ),
+        nome: Joi.string().required().min(3)
+            .messages(
+                { 'string.min': 'Nome deve ter no mínimo 3 caracteres' },
+            ),
         senha: Joi.string().min(6).max(12).required()
             .messages(
                 {
-                    'string.min': 'Password não vazio e ter entre 3 e 12 caracteres',
+                    'string.min': 'Password deve ter entre 3 e 12 caracteres',
                 },
             ),
     });
