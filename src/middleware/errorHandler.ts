@@ -8,13 +8,13 @@ export const errorHandler: ErrorRequestHandler = async (
 
     switch (name) {
         case 'ValidationError':
-            res.status(400).json({ message: details[0].message });
+            res.status(HTTP_STATUS.BAD_REQUEST).json({ message: details[0].message });
             break;
         case 'NotFoundError':
-            res.status(404).json({ message });
+            res.status(HTTP_STATUS.NOT_FOUND).json({ message });
             break;
         case 'Unauthorized':
-            res.status(401).json({ message });
+            res.status(HTTP_STATUS.UNAUTHORIZED).json({ message });
             break;
         default:
             res.status(500).json({ message });
