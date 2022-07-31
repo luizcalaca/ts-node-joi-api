@@ -1,4 +1,5 @@
 import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
+import { HTTP_STATUS } from '../enums/HttpStatus';
 
 export const errorHandler: ErrorRequestHandler = async (
     err, _req: Request, res: Response, next: NextFunction
