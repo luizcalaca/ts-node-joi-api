@@ -5,7 +5,7 @@ export const validateUser = (data: IUser): ValidationResult => {
     const schema = Joi.object({
         email: Joi.string().email().required()
             .messages(
-                { 'string.min': 'Email deve ter ao menos 3 caracteres' },
+                { 'any.required': 'Email válido é obrigatório' },
             ),
         nome: Joi.string().required().min(3)
             .messages(
